@@ -13,20 +13,39 @@ const CodeWindow: React.FC<CodeWindowProps> = ({ snippet, className = '' }) => {
       // Very basic heuristics for coloring
       let content = line;
       
+      // Tags (div, h1, etc) - simplistic approach looking for words at start or after braces/spaces
+      content = content.replace(/\b(div|h1|p|button|ul|li|a|span)\b(?![-(])/g, '<span class="text-pink-400 font-semibold">$1</span>');
+
       // Keywords
-      content = content.replace(/(component|state|style|render|end|div|h1|button)/g, '<span class="text-pink-400 font-semibold">$1</span>');
+      content = content.replace(/\b(state|style)\b/g, '<span class="text-purple-400 font-bold">$1</span>');
       
-      // Attributes/Props
-      content = content.replace(/(@click|class)/g, '<span class="text-yellow-300">$1</span>');
+      // Attributes keys (e.g. id:, href:)
+      content = content.replace(/\b([a-z]+):(?=\s)/g, '<span class="text-sky-300">$1:</span>');
+
+      // Event handlers (on: click)
+      content = content.replace(/(on:)\s*([a-z]+)/g, '<span class="text-yellow-300">$1 $2</span>');
       
       // Strings
       content = content.replace(/(".*?")/g, '<span class="text-green-300">$1</span>');
       
-      // Variables/Interpolation
-      content = content.replace(/({.*?})/g, '<span class="text-blue-300">$1</span>');
+      // Variables / Numbers
+      content = content.replace(/\b(\d+)\b/g, '<span class="text-orange-300">$1</span>');
       
-      // CSS Properties (simplified)
-      content = content.replace(/([a-z-]+):/g, '<span class="text-sky-300">$1:</span>');
+      // CSS Properties (snake_case) inside style blocks - simplified heuristic
+      content = content.replace(/([a-z_]+):/g, (match) => {
+         // try to distinguish between css prop and attribute key by context if possible, 
+         // but for simple heuristic, same color is often fine. Let's make props slightly different.
+         return `<span class="text-cyan-200">${match}</span>`;
+      });
+
+      // Comments
+      if (line.trim().startsWith('//')) {
+        content = `<span class="text-slate-500 italic">${line}</span>`;
+      } else if (content.includes('//')) {
+         // Handle inline comments somewhat gracefully (fragile)
+         const parts = content.split('//');
+         content = `${parts[0]}<span class="text-slate-500 italic">//${parts.slice(1).join('//')}</span>`;
+      }
 
       return (
         <div key={i} className="table-row">
