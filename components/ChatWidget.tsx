@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
-import { MessageCircle, X, Send, Bot, User, Sparkles, Loader2 } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Sparkles, Loader2 } from 'lucide-react';
 import { AI_SYSTEM_PROMPT } from '../constants';
 
 interface Message {
@@ -110,25 +110,17 @@ const ChatWidget: React.FC = () => {
         }`}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-4 flex items-center justify-between shrink-0">
-          <div className="flex items-center space-x-2">
-            <div className="p-1.5 bg-white/10 rounded-lg">
-              <Sparkles className="w-4 h-4 text-nml-green" />
-            </div>
-            <div>
-              <h3 className="text-white font-bold text-sm">NML Assistant</h3>
-              <p className="text-slate-400 text-xs flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                Powered by Gemini
-              </p>
-            </div>
+        <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-4 flex items-center space-x-3">
+          <div className="bg-white/10 p-2 rounded-lg">
+            <Sparkles className="w-5 h-5 text-nml-green" />
           </div>
-          <button 
-            onClick={() => setIsOpen(false)}
-            className="text-slate-400 hover:text-white transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div>
+            <h3 className="text-white font-bold text-sm">NML AI Assistant</h3>
+            <p className="text-slate-400 text-xs flex items-center">
+              <span className="w-2 h-2 bg-nml-green rounded-full mr-2 animate-pulse"></span>
+              Online
+            </p>
+          </div>
         </div>
 
         {/* Messages Area */}
@@ -136,36 +128,28 @@ const ChatWidget: React.FC = () => {
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex items-start gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                msg.role === 'user' ? 'bg-slate-200' : 'bg-nml-green'
-              }`}>
-                {msg.role === 'user' ? (
-                  <User className="w-5 h-5 text-slate-600" />
-                ) : (
-                  <Bot className="w-5 h-5 text-white" />
-                )}
-              </div>
-              
               <div
-                className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm whitespace-pre-wrap ${
+                className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
                   msg.role === 'user'
-                    ? 'bg-white text-slate-800 rounded-tr-none'
-                    : 'bg-white text-slate-800 rounded-tl-none border border-slate-100'
+                    ? 'bg-nml-green text-white rounded-br-none'
+                    : 'bg-white text-slate-800 border border-slate-100 rounded-bl-none'
                 }`}
               >
-                {msg.text}
+                {msg.role === 'model' && (
+                   <div className="flex items-center gap-2 mb-1 opacity-50 text-xs font-bold uppercase tracking-wider">
+                      <Bot className="w-3 h-3" /> NML AI
+                   </div>
+                )}
+                <div className="whitespace-pre-wrap">{msg.text}</div>
               </div>
             </div>
           ))}
-          {isLoading && messages[messages.length - 1]?.role === 'user' && (
-             <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-nml-green flex items-center justify-center shrink-0">
-                   <Loader2 className="w-5 h-5 text-white animate-spin" />
-                </div>
-                <div className="bg-white rounded-2xl rounded-tl-none px-4 py-3 shadow-sm border border-slate-100">
-                   <span className="text-slate-400 text-xs">AI is thinking...</span>
+          {isLoading && (
+             <div className="flex justify-start">
+                <div className="bg-white border border-slate-100 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm">
+                   <Loader2 className="w-5 h-5 text-nml-green animate-spin" />
                 </div>
              </div>
           )}
@@ -173,24 +157,25 @@ const ChatWidget: React.FC = () => {
         </div>
 
         {/* Input Area */}
-        <form onSubmit={handleSubmit} className="p-4 bg-white border-t border-slate-100 shrink-0">
-          <div className="relative flex items-center">
+        <div className="p-4 bg-white border-t border-slate-100">
+          <form onSubmit={handleSubmit} className="relative">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="NMLについて質問..."
-              className="w-full bg-slate-50 text-slate-900 placeholder-slate-400 rounded-full py-3 pl-4 pr-12 border border-slate-200 focus:outline-none focus:border-nml-green focus:ring-1 focus:ring-nml-green transition-all text-sm"
+              placeholder="NMLについて質問する..."
+              className="w-full bg-slate-50 text-slate-800 placeholder-slate-400 rounded-full pl-5 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-nml-green/50 focus:bg-white transition-all border border-slate-200"
+              disabled={isLoading}
             />
             <button
               type="submit"
               disabled={!input.trim() || isLoading}
-              className="absolute right-1.5 top-1.5 p-2 bg-nml-green text-white rounded-full hover:bg-emerald-600 disabled:opacity-50 disabled:hover:bg-nml-green transition-colors"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-nml-green text-white rounded-full hover:bg-emerald-600 disabled:opacity-50 disabled:hover:bg-nml-green transition-colors"
             >
               <Send className="w-4 h-4" />
             </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </>
   );

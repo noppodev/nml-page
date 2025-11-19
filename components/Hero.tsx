@@ -4,7 +4,11 @@ import CodeWindow from './CodeWindow';
 import { HERO_CODE } from '../constants';
 import { ArrowRight, ChevronRight } from 'lucide-react';
 
-const Hero: React.FC = () => {
+interface HeroProps {
+  onNavigate: (view: 'landing' | 'docs', sectionId?: string) => void;
+}
+
+const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
   return (
     <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-b from-white to-slate-50">
       {/* Background decoration */}
@@ -35,11 +39,11 @@ const Hero: React.FC = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button onClick={() => document.getElementById('quick-start')?.scrollIntoView({ behavior: 'smooth'})}>
+              <Button onClick={() => onNavigate('landing', 'quick-start')}>
                 始める
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button variant="outline" onClick={() => window.open('https://github.com', '_blank')}>
+              <Button variant="outline" onClick={() => onNavigate('docs')}>
                 ドキュメントを読む
               </Button>
             </div>

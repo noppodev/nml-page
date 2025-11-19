@@ -7,8 +7,8 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-white border-t border-slate-100 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div className="col-span-1 md:col-span-2">
+        <div className="flex flex-col md:flex-row justify-between gap-8 mb-8">
+          <div className="max-w-sm">
              <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-slate-900 rounded-md flex items-center justify-center text-white font-bold text-lg">
                   N
@@ -17,31 +17,28 @@ const Footer: React.FC = () => {
                   NML
                 </span>
              </div>
-             <p className="text-slate-500 text-sm max-w-sm">
+             <p className="text-slate-500 text-sm">
                NML (Noppo Markup Language) is a modern, concise web description language designed for developer happiness.
              </p>
           </div>
           
-          <div>
-            <h3 className="font-semibold text-slate-900 mb-4">Product</h3>
-            <ul className="space-y-2">
-              {NAV_ITEMS.map(item => (
-                <li key={item.label}>
-                  <a href={item.href} className="text-sm text-slate-500 hover:text-nml-green transition-colors">
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-slate-900 mb-4">Community</h3>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-sm text-slate-500 hover:text-nml-green transition-colors">GitHub</a></li>
-              <li><a href="#" className="text-sm text-slate-500 hover:text-nml-green transition-colors">Discord</a></li>
-              <li><a href="#" className="text-sm text-slate-500 hover:text-nml-green transition-colors">Twitter</a></li>
-            </ul>
+          <div className="flex gap-12">
+            <div>
+              <h3 className="font-semibold text-slate-900 mb-4">Product</h3>
+              <ul className="space-y-2">
+                {NAV_ITEMS.map(item => (
+                  <li key={item.label}>
+                    <button 
+                      // Simple footer links that don't effectively navigate in this static view 
+                      // but serve as a site map representation.
+                      className="text-sm text-slate-500 hover:text-nml-green transition-colors text-left"
+                    >
+                      {item.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
