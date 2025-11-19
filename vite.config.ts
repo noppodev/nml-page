@@ -13,10 +13,9 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
     },
     define: {
-      // Use a safer fallback to prevent build errors or runtime crashes
+      // Only define the API key. Do not overwrite the entire process.env object
+      // as it breaks React's internal NODE_ENV checks.
       'process.env.API_KEY': JSON.stringify(env.API_KEY || ''),
-      // Polyfill process.env as an empty object for compatibility
-      'process.env': JSON.stringify({}),
     },
   };
 });
