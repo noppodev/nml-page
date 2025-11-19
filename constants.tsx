@@ -11,7 +11,7 @@ export const NAV_ITEMS = [
 export const FEATURES: FeatureItem[] = [
   {
     title: '統合構文 (Unified Syntax)',
-    description: 'HTML、CSS、JavaScript を1つのファイル、1つの構文に統合。冗長なタグやコンテキストスイッチはもう必要ありません。Rubyのように直感的でエレガントです。',
+    description: 'HTML、CSS、JavaScript を1つのファイル、1つの構文に統合。冗長なタグやコンテキストスイッチはもう必要ありません。Rubyのように直感的でエレガンスです。',
     icon: <Layers className="w-6 h-6 text-white" />,
   },
   {
@@ -65,6 +65,24 @@ div(id: "app") {
 }`
 };
 
+export const VSCODE_SETTINGS_CODE: CodeSnippet = {
+  language: 'json',
+  fileName: '.vscode/settings.json',
+  code: `{
+  "files.associations": {
+    "*.nml": "ruby" 
+  },
+  "emmet.includeLanguages": {
+    "nml": "html"
+  },
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  }
+}`
+};
+
 export const MANUAL_TEXT = `
 # NML (Noppo Markup Language) 完全マニュアル
 
@@ -112,6 +130,10 @@ NMLは、スタイル定義をその要素に自動的に適用し、カプセ�
 
 ## 5. NMLの開発環境
 NMLはブラウザが直接実行する言語ではありません。NMLコンパイラ (\`nml-compiler\`) を使用して HTML/JS に変換します。
+
+## 6. エディタサポート (VS Code)
+Visual Studio Code での快適な開発のために、公式拡張機能または設定スニペットを提供しています。
+これにより、".nml" ファイルでのシンタックスハイライト、スニペット補完、自動フォーマットが利用可能になります。
 `;
 
 export const AI_SYSTEM_PROMPT = `
@@ -124,6 +146,7 @@ export const AI_SYSTEM_PROMPT = `
 - ユーザーが他の言語（ReactやVueなど）と比較した場合は、NMLの方がいかにシンプルで記述量が少ないかをアピールする。
 - 常に丁寧で、励ますようなトーンで話す。
 - 挨拶や自己紹介を求められたら、自分は「NML AI Assistant」であると名乗る。
+- VS Codeでの設定方法を聞かれたら、マニュアルの第6章に基づいて案内する。
 
 --- NML完全マニュアル ---
 ${MANUAL_TEXT}

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import CodeWindow from './CodeWindow';
+import { VSCODE_SETTINGS_CODE } from '../constants';
+import { Terminal, FileJson, Check } from 'lucide-react';
 
 const Documentation: React.FC = () => {
   const [activeSection, setActiveSection] = useState('philosophy');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -16,12 +19,19 @@ const Documentation: React.FC = () => {
     }
   };
 
+  const handleCopySettings = () => {
+    navigator.clipboard.writeText(VSCODE_SETTINGS_CODE.code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const sections = [
     { id: 'philosophy', title: '1. 哲学と概要' },
     { id: 'syntax', title: '2. 基本構文 (UTag)' },
     { id: 'state', title: '3. 状態管理' },
     { id: 'style', title: '4. スタイル記述' },
     { id: 'env', title: '5. 開発環境' },
+    { id: 'vscode', title: '6. VS Code サポート' },
   ];
 
   return (
@@ -169,9 +179,42 @@ button(on: click { count.value = 0 }) "リセット"`
                 <p className="text-slate-600 mb-4">
                   NMLファイル (<code>.nml</code>) はコンパイラによって標準的なHTML/JSに変換されます。
                 </p>
-                <div className="bg-slate-900 text-slate-200 p-4 rounded-lg font-mono text-sm">
+                <div className="bg-slate-900 text-slate-200 p-4 rounded-lg font-mono text-sm flex items-center">
+                  <Terminal className="w-4 h-4 mr-2 text-nml-green" />
                   $ nml-compiler compile src/App.nml
                 </div>
+              </div>
+
+              <div id="vscode" className="mb-16">
+                <h2 className="text-2xl text-slate-800 mb-4">6. VS Code サポート</h2>
+                <p className="text-slate-600 mb-6">
+                  NMLでの開発体験を最大化するために、公式拡張機能または設定スニペットを提供しています。
+                </p>
+                
+                <div className="bg-slate-900 text-slate-200 p-4 rounded-lg font-mono text-sm flex items-center mb-8 shadow-lg">
+                  <Terminal className="w-4 h-4 mr-2 text-nml-green" />
+                  $ code --install-extension noppo.nml-vscode
+                </div>
+
+                <div className="flex items-center justify-between mb-3">
+                   <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                      <FileJson className="w-5 h-5 text-slate-500" />
+                      手動設定 (settings.json)
+                   </h3>
+                   <button 
+                      onClick={handleCopySettings}
+                      className="flex items-center text-xs font-medium text-nml-green hover:text-emerald-700 bg-nml-green/10 px-3 py-1.5 rounded-full transition-colors"
+                   >
+                      {copied ? <Check className="w-3 h-3 mr-1" /> : null}
+                      {copied ? 'Copied!' : 'Copy JSON'}
+                   </button>
+                </div>
+                
+                <p className="text-slate-600 mb-4 text-sm">
+                   拡張機能を使用せずに簡易的なハイライトを有効にする場合は、以下の設定を <code>.vscode/settings.json</code> に追加してください。
+                   これにより、Rubyの構文ハイライトをベースにNMLファイルを扱えるようになります。
+                </p>
+                <CodeWindow snippet={VSCODE_SETTINGS_CODE} />
               </div>
 
             </div>
