@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
-import { MessageCircle, X, Send, Bot, Sparkles, Loader2 } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Sparkles, Loader2, ArrowRightCircle } from 'lucide-react';
 import { AI_SYSTEM_PROMPT } from '../constants';
 
 interface Message {
@@ -9,7 +9,11 @@ interface Message {
   text: string;
 }
 
-const ChatWidget: React.FC = () => {
+interface ChatWidgetProps {
+  onApplyCode?: (code: string) => void;
+}
+
+const ChatWidget: React.FC<ChatWidgetProps> = ({ onApplyCode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     { id: 'welcome', role: 'model', text: 'こんにちは！NMLについて何でも聞いてください。\n例：「コンポーネントの作り方は？」「stateの使い方は？」' }
@@ -53,7 +57,6 @@ const ChatWidget: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Create a placeholder for the model response
       const modelMessageId = (Date.now() + 1).toString();
       setMessages(prev => [...prev, { id: modelMessageId, role: 'model', text: '' }]);
 
@@ -82,6 +85,38 @@ const ChatWidget: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Function to render text with optional code actions
+  const renderMessageText = (text: string, role: 'user' | 'model') => {
+    // Check for code blocks ```nml ... ```
+    const parts = text.split(/(```nml[\s\S]*?```)/g);
+    
+    return parts.map((part, i) => {
+      if (part.startsWith('```nml')) {
+        const code = part.replace(/```nml\n?/, '').replace(/```$/, '').trim();
+        return (
+          <div key={i} className="my-2 overflow-hidden rounded-lg border border-slate-200">
+            <div className="bg-slate-800 text-xs text-slate-400 px-3 py-1 flex justify-between items-center">
+              <span>NML</span>
+              {role === 'model' && onApplyCode && (
+                <button 
+                  onClick={() => onApplyCode(code)}
+                  className="flex items-center text-nml-green hover:text-white transition-colors font-bold"
+                >
+                  <ArrowRightCircle className="w-3 h-3 mr-1" />
+                  Run in Editor
+                </button>
+              )}
+            </div>
+            <pre className="bg-[#1e1e1e] text-slate-200 p-3 text-xs overflow-x-auto font-mono">
+              {code}
+            </pre>
+          </div>
+        );
+      }
+      return <span key={i} className="whitespace-pre-wrap">{part}</span>;
+    });
   };
 
   return (
@@ -118,7 +153,7 @@ const ChatWidget: React.FC = () => {
             <h3 className="text-white font-bold text-sm">NML AI Assistant</h3>
             <p className="text-slate-400 text-xs flex items-center">
               <span className="w-2 h-2 bg-nml-green rounded-full mr-2 animate-pulse"></span>
-              Online
+              Online & Connected
             </p>
           </div>
         </div>
@@ -142,7 +177,7 @@ const ChatWidget: React.FC = () => {
                       <Bot className="w-3 h-3" /> NML AI
                    </div>
                 )}
-                <div className="whitespace-pre-wrap">{msg.text}</div>
+                <div>{renderMessageText(msg.text, msg.role)}</div>
               </div>
             </div>
           ))}
@@ -163,7 +198,7 @@ const ChatWidget: React.FC = () => {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="NMLについて質問する..."
+              placeholder="コードを書いて、と頼んでみてください..."
               className="w-full bg-slate-50 text-slate-800 placeholder-slate-400 rounded-full pl-5 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-nml-green/50 focus:bg-white transition-all border border-slate-200"
               disabled={isLoading}
             />

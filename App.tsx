@@ -6,19 +6,20 @@ import QuickStart from './components/QuickStart';
 import Footer from './components/Footer';
 import ChatWidget from './components/ChatWidget';
 import Documentation from './components/Documentation';
+import Playground from './components/Playground';
+import { PLAYGROUND_DEFAULT_CODE } from './constants';
 
 function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'docs'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'docs' | 'playground'>('landing');
+  const [playgroundCode, setPlaygroundCode] = useState(PLAYGROUND_DEFAULT_CODE);
 
-  const handleNavigate = (view: 'landing' | 'docs', sectionId?: string) => {
+  const handleNavigate = (view: 'landing' | 'docs' | 'playground', sectionId?: string) => {
     setCurrentView(view);
     
-    // If navigating to a section on the landing page
     if (view === 'landing' && sectionId) {
       if (sectionId === 'top') {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        // Use setTimeout to allow the render to switch view first if needed
         setTimeout(() => {
           const element = document.getElementById(sectionId);
           if (element) {
@@ -26,10 +27,14 @@ function App() {
           }
         }, 50);
       }
-    } else if (view === 'docs') {
-       // Scroll to top when switching to docs
+    } else {
        window.scrollTo(0, 0);
     }
+  };
+
+  const handleApplyCode = (code: string) => {
+    setPlaygroundCode(code);
+    handleNavigate('playground');
   };
 
   return (
@@ -42,12 +47,14 @@ function App() {
           <Features />
           <QuickStart />
         </main>
-      ) : (
+      ) : currentView === 'docs' ? (
         <Documentation />
+      ) : (
+        <Playground code={playgroundCode} onCodeChange={setPlaygroundCode} />
       )}
       
       <Footer />
-      <ChatWidget />
+      <ChatWidget onApplyCode={handleApplyCode} />
     </div>
   );
 }

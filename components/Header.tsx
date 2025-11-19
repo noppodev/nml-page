@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { NAV_ITEMS } from '../constants';
 
 interface HeaderProps {
-  onNavigate: (view: 'landing' | 'docs', sectionId?: string) => void;
-  currentView: 'landing' | 'docs';
+  onNavigate: (view: 'landing' | 'docs' | 'playground', sectionId?: string) => void;
+  currentView: 'landing' | 'docs' | 'playground';
 }
 
 const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
@@ -21,6 +21,8 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
   const handleNavClick = (item: typeof NAV_ITEMS[0]) => {
     if (item.id === 'docs') {
       onNavigate('docs');
+    } else if (item.id === 'playground') {
+      onNavigate('playground');
     } else {
       onNavigate('landing', item.id);
     }
@@ -30,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        isScrolled || isMobileMenuOpen || currentView === 'docs' ? 'bg-white/90 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'
+        isScrolled || isMobileMenuOpen || currentView === 'docs' || currentView === 'playground' ? 'bg-white/90 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView }) => {
                 key={item.label} 
                 onClick={() => handleNavClick(item)}
                 className={`text-sm font-medium transition-colors focus:outline-none ${
-                  currentView === 'docs' && item.id === 'docs' 
+                  (currentView === 'docs' && item.id === 'docs') || (currentView === 'playground' && item.id === 'playground')
                     ? 'text-nml-green font-bold' 
                     : 'text-slate-600 hover:text-nml-green'
                 }`}

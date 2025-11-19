@@ -6,6 +6,7 @@ export const NAV_ITEMS = [
   { label: '特徴', id: 'features' },
   { label: 'クイックスタート', id: 'quick-start' },
   { label: 'ドキュメント', id: 'docs' },
+  { label: 'プレイグラウンド', id: 'playground' },
 ];
 
 export const FEATURES: FeatureItem[] = [
@@ -65,23 +66,50 @@ div(id: "app") {
 }`
 };
 
-export const VSCODE_SETTINGS_CODE: CodeSnippet = {
-  language: 'json',
-  fileName: '.vscode/settings.json',
-  code: `{
-  "files.associations": {
-    "*.nml": "ruby" 
-  },
-  "emmet.includeLanguages": {
-    "nml": "html"
-  },
-  "editor.quickSuggestions": {
-    "other": true,
-    "comments": false,
-    "strings": true
+export const PLAYGROUND_DEFAULT_CODE = `state count = 0
+state name = "NML User"
+
+div.container {
+  style {
+    font_family: "sans-serif"
+    padding: "20px"
+    background_color: "#f8f9fa"
+    border_radius: "8px"
+    text_align: "center"
   }
-}`
-};
+
+  h2 "Hello, " name
+  p "現在のカウント: " count
+
+  div.buttons {
+    style { margin_top: "20px" }
+    
+    button(on: click { count.value += 1 }) {
+      style {
+        background_color: "#42b983"
+        color: "white"
+        border: "none"
+        padding: "8px 16px"
+        border_radius: "4px"
+        margin_right: "10px"
+        cursor: "pointer"
+      }
+      "増やす"
+    }
+
+    button(on: click { count.value = 0 }) {
+      style {
+        background_color: "#e74c3c"
+        color: "white"
+        border: "none"
+        padding: "8px 16px"
+        border_radius: "4px"
+        cursor: "pointer"
+      }
+      "リセット"
+    }
+  }
+}`;
 
 export const MANUAL_TEXT = `
 # NML (Noppo Markup Language) 完全マニュアル
@@ -129,11 +157,7 @@ NMLは、スタイル定義をその要素に自動的に適用し、カプセ�
 推奨されるスタイル名はアンダースコア形式 (\`background_color\`) です。
 
 ## 5. NMLの開発環境
-NMLはブラウザが直接実行する言語ではありません。NMLコンパイラ (\`nml-compiler\`) を使用して HTML/JS に変換します。
-
-## 6. エディタサポート (VS Code)
-Visual Studio Code での快適な開発のために、公式拡張機能または設定スニペットを提供しています。
-これにより、".nml" ファイルでのシンタックスハイライト、スニペット補完、自動フォーマットが利用可能になります。
+NMLはブラウザが直接実行する言語ではありません。通常はコンパイラを使用しますが、本サイトの「プレイグラウンド」ではリアルタイムにコンパイルと実行を試すことができます。
 `;
 
 export const AI_SYSTEM_PROMPT = `
@@ -143,10 +167,9 @@ export const AI_SYSTEM_PROMPT = `
 あなたの役割：
 - NMLの大ファンとして振る舞う。
 - Rubyのようにエレガントで、書くことが楽しいこの言語の魅力を伝える。
-- ユーザーが他の言語（ReactやVueなど）と比較した場合は、NMLの方がいかにシンプルで記述量が少ないかをアピールする。
 - 常に丁寧で、励ますようなトーンで話す。
-- 挨拶や自己紹介を求められたら、自分は「NML AI Assistant」であると名乗る。
-- VS Codeでの設定方法を聞かれたら、マニュアルの第6章に基づいて案内する。
+- サイト内には「プレイグラウンド」があり、ユーザーはそこでコードを実行できることを案内する。
+- **重要**: ユーザーからコードの作成や修正を依頼された場合、あなたはNML形式のコードブロックを作成する。ユーザーはそのコードをワンクリックでプレイグラウンドに適用できる。
 
 --- NML完全マニュアル ---
 ${MANUAL_TEXT}
